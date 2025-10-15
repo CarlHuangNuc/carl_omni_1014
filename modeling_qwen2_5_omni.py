@@ -2582,9 +2582,10 @@ class Qwen2_5OmniThinkerForConditionalGeneration(Qwen2_5OmniPreTrainedModelForCo
                 cache_length = 0
             if self.is_first_gene == True:
                 attention_mask = torch.ones((attention_mask.shape[0], cache_length + inputs_embeds.shape[1]), dtype=torch.int, device=self.device)
-                self.is_first_gene == False
+                self.is_first_gene = False
             else:
-                print(attention_mask.shape)
+                pass
+                #print(attention_mask.shape)
         else:
             cache_length = 0
 
@@ -4914,7 +4915,10 @@ class Qwen2_5OmniForConditionalGeneration(Qwen2_5OmniPreTrainedModel, Generation
                 talker_attention_mask = torch.cat(
                 [kwargs["attention_mask"][:1,:], kwargs["attention_mask"][:1,:].new_ones((1, 2+self.thinker.llm_input_ids.shape[1] - 1))], dim=1
                 ).to(self.talker.device)
-
+                
+            if "streamer" in talker_kwargs:
+                removed_value = talker_kwargs.pop("streamer")
+            
             talker_result = self.talker.generate(
                 input_ids=talker_input_ids,
                 input_text_ids=talker_input_text_ids,
